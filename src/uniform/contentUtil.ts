@@ -92,7 +92,8 @@ const entryToShop = (e: Entry): Shop | undefined => {
       src: e.entry?.fields?.mobileImage?.value
         ? (e.entry?.fields?.mobileImage?.value as AssetParamValue)[0].fields
             ?.url?.value
-        : "https://tailwindui.com/img/ecommerce-images/category-page-07-product-01.jpg",
+        : // TODO: remove this fallback after images are sorted
+          "https://tailwindui.com/img/ecommerce-images/category-page-07-product-01.jpg",
     },
     // TODO
     logoImage: {
@@ -102,7 +103,8 @@ const entryToShop = (e: Entry): Shop | undefined => {
       src: e.entry?.fields?.largeImage?.value
         ? (e.entry?.fields?.largeImage?.value as AssetParamValue)[0].fields?.url
             ?.value
-        : "https://tailwindui.com/img/ecommerce-images/category-page-07-product-01.jpg",
+        : // TODO: remove this fallback after images are sorted
+          "https://tailwindui.com/img/ecommerce-images/category-page-07-product-01.jpg",
     },
     categories:
       (
