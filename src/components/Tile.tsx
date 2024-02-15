@@ -5,8 +5,8 @@ import Link from "next/link";
 const ShopTile = ({
   shopTitle,
   slug,
-  categories,
-  subCategories,
+  category,
+  subCategory,
   thumbnailImage,
   phoneNumber,
   services,
@@ -19,13 +19,13 @@ const ShopTile = ({
           className="h-full w-full object-cover object-center"
         />
       </div>
-      <h3 className="mt-4 font-medium text-gray-900">{shopTitle}</h3>
-      <p className="italic text-gray-500">
-        Categories: {categories?.join(", ")}
-      </p>
-      <p className="mt-2 font-medium text-gray-900">
-        Subcategories: {subCategories?.join(", ")}
-      </p>
+      <h3 className="mt-4 font-medium text-gray-900 text-2xl">{shopTitle}</h3>
+      <p className="italic text-gray-500 text-xl">Category: {category}</p>
+      {subCategory ? (
+        <p className="mt-2 font-medium text-gray-900 text-xl">
+          Subcategory: {subCategory}
+        </p>
+      ) : null}
       <p className="mt-2 font-medium text-gray-900">Contact: {phoneNumber}</p>
       {services?.length > 0 ? (
         <p className="mt-2 font-medium text-gray-900">

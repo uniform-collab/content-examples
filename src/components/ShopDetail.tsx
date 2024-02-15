@@ -5,8 +5,8 @@ const ShopDetail = ({ shop }: { shop?: Shop }) => {
   const {
     shopTitle,
     description,
-    categories,
-    subCategories,
+    category,
+    subCategory,
     openingHours,
     image,
     phoneNumber,
@@ -40,11 +40,9 @@ const ShopDetail = ({ shop }: { shop?: Shop }) => {
         metaDescription: {metaDescription}
       </p>
       <hr />
-      <p className="italic text-gray-500">
-        Categories: {categories?.join(", ")}
-      </p>
+      <p className="italic text-gray-500">Category: {category}</p>
       <p className="mt-2 font-medium text-gray-900">
-        Subcategories: {subCategories?.join(", ")}
+        Subcategory: {subCategory}
       </p>
       <p className="mt-2 font-medium text-gray-900">
         Services: {services?.join(", ")}

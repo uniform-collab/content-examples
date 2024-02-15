@@ -4,12 +4,18 @@ export type OpeningHour = {
   close: string;
 };
 
+export type Category = {
+  name: string;
+  id: string;
+  slug: string;
+}
+
 export type Shop = {
   shopTitle: string;
   description: string;
   slug: string;
-  categories: string[];
-  subCategories: string[];
+  category: string;
+  subCategory: string;
   openingHours: OpeningHour[];
   services: string[];
   logoImage: {

@@ -1,6 +1,11 @@
 import ShopTile from "@/components/Tile";
 import { Shop } from "@/types";
-import { getShops } from "@/uniform/contentUtil";
+import {
+  getCategories,
+  getShops,
+  getSubCategories,
+} from "@/uniform/contentUtil";
+import { Category } from "@uniformdev/canvas";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 
 type ShopsRestaurantsPage = {
@@ -31,6 +36,7 @@ export default function ShopsRestaurants({
 }
 
 export const getStaticProps = (async ({ preview }) => {
-  const shops = await getShops(100, preview === true);
+  const shops = await getShops(300, Boolean(preview));
+
   return { props: { shops } };
 }) satisfies GetStaticProps<ShopsRestaurantsPage>;
