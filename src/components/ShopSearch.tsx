@@ -4,6 +4,7 @@ import ShopTile from "./Tile";
 
 const ShopSearch = ({ categories }: { categories: Record<string, string> }) => {
   const [searchResults, setSearchResults] = React.useState([]);
+  const [sortOrder, setSortOrder] = React.useState("asc");
   const [searchTerm, setSearchTerm] = React.useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const onChangeHandler = async (event: any) => {
@@ -13,13 +14,13 @@ const ShopSearch = ({ categories }: { categories: Record<string, string> }) => {
   useEffect(() => {
     async function runSearch() {
       const response = await fetch(
-        `/api/search?q=${searchTerm}&cat=${selectedCategory}`
+        `/api/search?q=${searchTerm}&cat=${selectedCategory}&sort=${sortOrder}`
       );
       const results = await response.json();
       setSearchResults(results);
     }
     runSearch();
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedCategory, sortOrder]);
 
   return (
     <>
@@ -50,7 +51,34 @@ const ShopSearch = ({ categories }: { categories: Record<string, string> }) => {
           required
         />
       </div>
-      <div className="mx-auto max-w-7xl overflow-hidden px-4 py-64 sm:px-6 sm:py-24 lg:px-8">
+      <div className="mx-auto max-w-7xl overflow-hidden px-4 py-6 sm:px-6 sm:py-6 lg:px-8">
+        <h1 className="text-primary text-xl">{searchResults.length} results</h1>
+        <span className="isolate inline-flex rounded-md shadow-sm">
+          <button
+            type="button"
+            className={`relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10 ${
+              sortOrder === "asc"
+                ? "bg-indigo-500 ring-indigo-300 hover:bg-indigo-400  text-white"
+                : "bg-white ring-gray-300 hover:bg-gray-50 text-gray-900 "
+            }`}
+            disabled={sortOrder === "asc"}
+            onClick={() => setSortOrder("asc")}
+          >
+            A-Z
+          </button>
+          <button
+            type="button"
+            className={`relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10 ${
+              sortOrder === "desc"
+                ? "bg-indigo-500 ring-indigo-300 hover:bg-indigo-400 text-white"
+                : "bg-white ring-gray-300 hover:bg-gray-50 text-gray-900 "
+            }`}
+            disabled={sortOrder === "desc"}
+            onClick={() => setSortOrder("desc")}
+          >
+            Z-A
+          </button>
+        </span>
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
           {searchResults?.map((shop: Shop, index: number) => (
             <ShopTile key={index} {...shop} />

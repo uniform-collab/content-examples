@@ -6,9 +6,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any[]>
 ) {
-  const { cat, q } = req.query || {};
+  const { cat, q, sort } = req.query || {};
   const searchQuery = q as string;
-
+  const sortOrder = sort === "asc" ? "ASC" : "DESC";
   // don't run search if it's less than 3 chars
   // if (searchQuery?.length < 2) {
   //   return res.status(200).json([]);
@@ -30,6 +30,7 @@ export default async function handler(
       skipDataResolution: true,
       locale: "fr-FR",
       limit: 100,
+      orderBy: [`fields.shopTitle_${sortOrder}`],
     })
     .then((results) => {
       return results.entries.map((e) => entryToShop(e));
