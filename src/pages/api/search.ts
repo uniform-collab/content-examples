@@ -32,7 +32,6 @@ export default async function handler(
       limit: 100,
     })
     .then((results) => {
-      console.log(results.entries);
       return results.entries.map((e) => entryToShop(e));
     });
 

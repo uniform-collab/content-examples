@@ -28,7 +28,6 @@ export async function getEntriesByType(
   preview: boolean
 ): Promise<Entry[]> {
   let result: Entry[] = [];
-  let fetched = limit > 20 ? 20 : limit;
   let offset = 0;
   let latestResponseLength = -1;
   while (latestResponseLength === -1 || latestResponseLength >= 20) {
@@ -40,10 +39,9 @@ export async function getEntriesByType(
     });
     latestResponseLength = response.entries.length;
     result = result.concat(response.entries);
-    offset += result.length;
-    fetched += result.length;
+    offset += 20;
   }
-
+  // console.log({ typeId, total: result.length });
   return result;
 }
 
@@ -127,8 +125,12 @@ export async function getShopBySlug(
 
 export const entryToShop = (
   e: Entry,
-  categoryMap: Map<string, { name: string; slug: string }> | undefined = undefined,
-  subCategoryMap: Map<string, { name: string; slug: string }> | undefined = undefined
+  categoryMap:
+    | Map<string, { name: string; slug: string }>
+    | undefined = undefined,
+  subCategoryMap:
+    | Map<string, { name: string; slug: string }>
+    | undefined = undefined
 ): Shop => {
   let shop: Shop = {};
   if (!e) {
@@ -189,8 +191,8 @@ export const entryToShop = (
       };
     }) as OpeningHour[],
     phoneNumber: e.entry?.fields?.contact?.value as string,
-    metaDescription: e.entry?.fields?.metaDescription?.value as string,
-    pageTitle: e.entry?.fields?.pageTitle?.value as string,
+    metaDescription: (e.entry?.fields?.metaDescription?.value as string) ?? "",
+    pageTitle: e.entry?.fields?.pageTitle?.value as string ?? "",
     mapId: e.entry?.fields?.placeId?.value as string,
     socialLinks: {
       x: (e.entry?.fields?.twitterUrl?.value as LinkParamValue)?.path ?? "",
