@@ -15,6 +15,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("flowbite/plugin")],
+  plugins: [require("@tailwindcss/forms")],
 };
 export default config;

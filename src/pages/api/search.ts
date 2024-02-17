@@ -6,7 +6,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any[]>
 ) {
-  const { q } = req.query || {};
+  const { cat, q } = req.query || {};
   const searchQuery = q as string;
 
   // don't run search if it's less than 3 chars
@@ -14,17 +14,19 @@ export default async function handler(
   //   return res.status(200).json([]);
   // }
 
+  // adding category filter, if provided
+  let filters = {};
+  if (cat) {
+    filters = {
+      "fields.category": { eq: cat },
+    };
+  }
+
   const searchResults = await contentClient
     .getEntries({
       type: ["shop"],
       search: searchQuery,
-      filters: {
-        // "fields.shopTitle": { match: q as string },
-        // type: "shop",
-        // filters: {
-        //   "fields.shopTitle": { match: "American Vintage" },
-        // },
-      },
+      filters,
       skipDataResolution: true,
       locale: "fr-FR",
       limit: 100,
