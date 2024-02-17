@@ -116,7 +116,7 @@ export async function getShopBySlug(
   return entryToShop(response.entries?.[0], categoryMap, subCategoryMap);
 }
 
-const entryToShop = (
+export const entryToShop = (
   e: Entry,
   categoryMap: Map<string, { name: string; slug: string }>,
   subCategoryMap: Map<string, { name: string; slug: string }>
@@ -130,7 +130,6 @@ const entryToShop = (
   const subCategoryName = subCategoryMap?.get(
     e.entry?.fields?.subCategory?.value as string
   )?.name;
-  console.log({ categoryId, categoryName });
 
   const shop: Shop = {
     shopTitle: e.entry?.fields?.shopTitle?.value as string,

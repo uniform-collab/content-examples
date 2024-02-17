@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@uniformdev/canvas": "^19.108.0",
-    "@uniformdev/richtext": "^19.108.0",
+    "@uniformdev/canvas": "19.113.1-alpha.1",
+    "@uniformdev/richtext": "19.113.1-alpha.1",
+    "flowbite": "^2.3.0",
+    "flowbite-react": "^0.7.2",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18"
