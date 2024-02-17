@@ -1,4 +1,4 @@
-import { OpeningHour, Shop } from "@/types";
+import { Category, OpeningHour, Shop } from "@/types";
 import {
   AssetParamValue,
   CANVAS_DRAFT_STATE,
@@ -28,7 +28,6 @@ export async function getEntriesByType(
   preview: boolean
 ): Promise<Entry[]> {
   let result: Entry[] = [];
-  let fetched = limit > 20 ? 20 : limit;
   let offset = 0;
   let latestResponseLength = -1;
   while (latestResponseLength === -1 || latestResponseLength >= 20) {
@@ -40,19 +39,54 @@ export async function getEntriesByType(
     });
     latestResponseLength = response.entries.length;
     result = result.concat(response.entries);
-    offset += result.length;
-    fetched += result.length;
+    offset += 20;
   }
-
+  // console.log({ typeId, total: result.length });
   return result;
+}
+
+export async function getCategoryMap(preview: Boolean) {
+  const categories = await getCategories(100, Boolean(preview));
+  const categoryMap = new Map();
+  categories.forEach((cat) => {
+    categoryMap.set(cat.id, { slug: cat.slug, name: cat.name });
+  });
+  return categoryMap;
+}
+
+export async function getSubcategoryMap(preview: Boolean) {
+  const subCategories = await getSubCategories(100, Boolean(preview));
+  const subCategoryMap = new Map();
+  subCategories.forEach((cat) => {
+    subCategoryMap.set(cat.id, { slug: cat.slug, name: cat.name });
+  });
+  return subCategoryMap;
 }
 
 export async function getShops(
   limit: number = 300,
   preview: boolean = false
 ): Promise<Shop[]> {
-  const shopEntries = await getEntriesByType("shop", limit, preview);
-  return shopEntries?.map((e) => entryToShop(e)!);
+  const categories = await getCategoryMap(preview);
+  const subCategories = await getSubcategoryMap(preview);
+  const entries = await getEntriesByType("shop", limit, preview);
+  return entries?.map((e) => entryToShop(e, categories, subCategories));
+}
+
+export async function getCategories(
+  limit: number = 300,
+  preview: boolean = false
+): Promise<Category[]> {
+  const entries = await getEntriesByType("category", limit, preview);
+  return entries?.map((e) => entryToCategory(e)!);
+}
+
+export async function getSubCategories(
+  limit: number = 300,
+  preview: boolean = false
+): Promise<Category[]> {
+  const entries = await getEntriesByType("subCategory", limit, preview);
+  return entries?.map((e) => entryToCategory(e)!);
 }
 
 export async function getShopSlugs(
@@ -68,21 +102,49 @@ export async function getShopBySlug(
   slug: string,
   preview: boolean = false
 ): Promise<Shop | undefined> {
+  const categories = await getCategories(100, Boolean(preview));
+  const categoryMap = new Map();
+  categories.forEach((cat) => {
+    categoryMap.set(cat.id, { slug: cat.slug, name: cat.name });
+  });
+
+  const subCategories = await getSubCategories(100, Boolean(preview));
+  const subCategoryMap = new Map();
+  subCategories.forEach((cat) => {
+    subCategoryMap.set(cat.id, { slug: cat.slug, name: cat.name });
+  });
+
   const response: GetEntriesResponse = await contentClient.getEntries({
     type: ["shop"],
     slug: slug,
     state: getState(preview),
     limit: 1,
   });
-  return entryToShop(response.entries?.[0]);
+  return entryToShop(response.entries?.[0], categoryMap, subCategoryMap);
 }
 
-const entryToShop = (e: Entry): Shop | undefined => {
+export const entryToShop = (
+  e: Entry,
+  categoryMap:
+    | Map<string, { name: string; slug: string }>
+    | undefined = undefined,
+  subCategoryMap:
+    | Map<string, { name: string; slug: string }>
+    | undefined = undefined
+): Shop => {
+  let shop: Shop = { id: "" };
   if (!e) {
-    return undefined;
+    return shop;
   }
 
-  const shop: Shop = {
+  const categoryId = e.entry?.fields?.category?.value as string;
+  const categoryName = categoryMap?.get(categoryId)?.name;
+  const subCategoryName = subCategoryMap?.get(
+    e.entry?.fields?.subCategory?.value as string
+  )?.name;
+
+  shop = {
+    id: e.entry._id,
     shopTitle: e.entry?.fields?.shopTitle?.value as string,
     slug: e.entry?._slug as string,
     description: renderToHtml(
@@ -106,12 +168,9 @@ const entryToShop = (e: Entry): Shop | undefined => {
         : // TODO: remove this fallback after images are sorted
           "https://tailwindui.com/img/ecommerce-images/category-page-07-product-01.jpg",
     },
-    categories:
-      (
-        e.entry?.fields?.category?.value as Array<{
-          fields: { itemName: string };
-        }>
-      )?.map((c: any) => c.fields.itemName.value) ?? ([] as string[]),
+    category: categoryName ?? "",
+    categoryId: (e.entry?.fields?.category?.value as string) ?? "",
+    subCategory: subCategoryName ?? "",
     services:
       (
         e.entry?.fields?.services?.value as Array<{
@@ -133,15 +192,9 @@ const entryToShop = (e: Entry): Shop | undefined => {
         close: c.fields.closingTime?.value,
       };
     }) as OpeningHour[],
-    subCategories:
-      (
-        e.entry?.fields?.subCategory?.value as Array<{
-          fields: { itemName: string };
-        }>
-      )?.map((c: any) => c.fields.itemName.value) ?? ([] as string[]),
     phoneNumber: e.entry?.fields?.contact?.value as string,
-    metaDescription: e.entry?.fields?.metaDescription?.value as string,
-    pageTitle: e.entry?.fields?.pageTitle?.value as string,
+    metaDescription: (e.entry?.fields?.metaDescription?.value as string) ?? "",
+    pageTitle: (e.entry?.fields?.pageTitle?.value as string) ?? "",
     mapId: e.entry?.fields?.placeId?.value as string,
     socialLinks: {
       x: (e.entry?.fields?.twitterUrl?.value as LinkParamValue)?.path ?? "",
@@ -149,5 +202,22 @@ const entryToShop = (e: Entry): Shop | undefined => {
         (e.entry?.fields?.facebookUrl?.value as LinkParamValue)?.path ?? "",
     },
   };
+
   return shop;
+};
+
+const entryToCategory = (e: Entry): Category | undefined => {
+  if (!e) {
+    return undefined;
+  }
+
+  const category: Category = {
+    id: e.entry._id,
+    name:
+      (e.entry?.fields?.category?.value as string) ??
+      (e.entry?.fields?.subCategoryName?.value as string),
+    slug: e.entry?._slug as string,
+  };
+
+  return category;
 };

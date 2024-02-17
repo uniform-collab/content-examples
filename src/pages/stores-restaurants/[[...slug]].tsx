@@ -28,7 +28,7 @@ export const getStaticProps = (async ({ params, preview }) => {
 }) satisfies GetStaticProps<ShopDetailPageProps>;
 
 export const getStaticPaths = (async () => {
-  const paths = (await getShopSlugs()).map((s) => `/stores-restaurants/${s}`);
+  const paths = (await getShopSlugs(300)).map((s) => `/stores-restaurants/${s}`);
   return {
     paths,
     fallback: false,

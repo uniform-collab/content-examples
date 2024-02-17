@@ -4,28 +4,36 @@ export type OpeningHour = {
   close: string;
 };
 
-export type Shop = {
-  shopTitle: string;
-  description: string;
+export type Category = {
+  name: string;
+  id: string;
   slug: string;
-  categories: string[];
-  subCategories: string[];
-  openingHours: OpeningHour[];
-  services: string[];
-  logoImage: {
+}
+
+export type Shop = {
+  id: string;
+  shopTitle?: string;
+  description?: string;
+  slug?: string;
+  categoryId?: string;
+  category?: string;
+  subCategory?: string;
+  openingHours?: OpeningHour[];
+  services?: string[];
+  logoImage?: {
     src: string;
   };
-  thumbnailImage: {
+  thumbnailImage?: {
     src: string;
   };
-  image: {
+  image?: {
     src: string;
   };
   phoneNumber?: string;
-  metaDescription: string;
-  pageTitle: string;
-  mapId: string;
-  socialLinks: {
+  metaDescription?: string;
+  pageTitle?: string;
+  mapId?: string;
+  socialLinks?: {
     x?: string;
     facebook?: string;
   };
