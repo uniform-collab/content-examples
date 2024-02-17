@@ -47,23 +47,32 @@ export async function getEntriesByType(
   return result;
 }
 
-export async function getShops(
-  limit: number = 300,
-  preview: boolean = false
-): Promise<Shop[]> {
+export async function getCategoryMap(preview: Boolean) {
   const categories = await getCategories(100, Boolean(preview));
   const categoryMap = new Map();
   categories.forEach((cat) => {
     categoryMap.set(cat.id, { slug: cat.slug, name: cat.name });
   });
+  return categoryMap;
+}
 
+export async function getSubcategoryMap(preview: Boolean) {
   const subCategories = await getSubCategories(100, Boolean(preview));
   const subCategoryMap = new Map();
   subCategories.forEach((cat) => {
     subCategoryMap.set(cat.id, { slug: cat.slug, name: cat.name });
   });
+  return subCategoryMap;
+}
+
+export async function getShops(
+  limit: number = 300,
+  preview: boolean = false
+): Promise<Shop[]> {
+  const categories = await getCategoryMap(preview);
+  const subCategories = await getSubcategoryMap(preview);
   const entries = await getEntriesByType("shop", limit, preview);
-  return entries?.map((e) => entryToShop(e, categoryMap, subCategoryMap)!);
+  return entries?.map((e) => entryToShop(e, categories, subCategories));
 }
 
 export async function getCategories(
@@ -118,11 +127,12 @@ export async function getShopBySlug(
 
 export const entryToShop = (
   e: Entry,
-  categoryMap: Map<string, { name: string; slug: string }>,
-  subCategoryMap: Map<string, { name: string; slug: string }>
-): Shop | undefined => {
+  categoryMap: Map<string, { name: string; slug: string }> | undefined = undefined,
+  subCategoryMap: Map<string, { name: string; slug: string }> | undefined = undefined
+): Shop => {
+  let shop: Shop = {};
   if (!e) {
-    return undefined;
+    return shop;
   }
 
   const categoryId = e.entry?.fields?.category?.value as string;
@@ -131,7 +141,7 @@ export const entryToShop = (
     e.entry?.fields?.subCategory?.value as string
   )?.name;
 
-  const shop: Shop = {
+  shop = {
     shopTitle: e.entry?.fields?.shopTitle?.value as string,
     slug: e.entry?._slug as string,
     description: renderToHtml(

@@ -7,10 +7,17 @@ export default async function handler(
   res: NextApiResponse<any[]>
 ) {
   const { q } = req.query || {};
+  const searchQuery = q as string;
+
+  // don't run search if it's less than 3 chars
+  // if (searchQuery?.length < 2) {
+  //   return res.status(200).json([]);
+  // }
+
   const searchResults = await contentClient
     .getEntries({
       type: ["shop"],
-      search: q as string,
+      search: searchQuery,
       filters: {
         // "fields.shopTitle": { match: q as string },
         // type: "shop",
@@ -20,7 +27,7 @@ export default async function handler(
       },
       skipDataResolution: true,
       locale: "fr-FR",
-      limit: 1,
+      limit: 100,
     })
     .then((results) => {
       console.log(results.entries);
