@@ -132,7 +132,7 @@ export const entryToShop = (
     | Map<string, { name: string; slug: string }>
     | undefined = undefined
 ): Shop => {
-  let shop: Shop = {};
+  let shop: Shop = { id: "" };
   if (!e) {
     return shop;
   }
@@ -144,6 +144,7 @@ export const entryToShop = (
   )?.name;
 
   shop = {
+    id: e.entry._id,
     shopTitle: e.entry?.fields?.shopTitle?.value as string,
     slug: e.entry?._slug as string,
     description: renderToHtml(
@@ -168,6 +169,7 @@ export const entryToShop = (
           "https://tailwindui.com/img/ecommerce-images/category-page-07-product-01.jpg",
     },
     category: categoryName ?? "",
+    categoryId: (e.entry?.fields?.category?.value as string) ?? "",
     subCategory: subCategoryName ?? "",
     services:
       (
@@ -192,7 +194,7 @@ export const entryToShop = (
     }) as OpeningHour[],
     phoneNumber: e.entry?.fields?.contact?.value as string,
     metaDescription: (e.entry?.fields?.metaDescription?.value as string) ?? "",
-    pageTitle: e.entry?.fields?.pageTitle?.value as string ?? "",
+    pageTitle: (e.entry?.fields?.pageTitle?.value as string) ?? "",
     mapId: e.entry?.fields?.placeId?.value as string,
     socialLinks: {
       x: (e.entry?.fields?.twitterUrl?.value as LinkParamValue)?.path ?? "",

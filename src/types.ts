@@ -11,9 +11,11 @@ export type Category = {
 }
 
 export type Shop = {
+  id: string;
   shopTitle?: string;
   description?: string;
   slug?: string;
+  categoryId?: string;
   category?: string;
   subCategory?: string;
   openingHours?: OpeningHour[];

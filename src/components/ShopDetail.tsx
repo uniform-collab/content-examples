@@ -1,11 +1,14 @@
 import React from "react";
 import { Shop } from "@/types";
+import SimilarShops from "./SimilarShops";
 
 const ShopDetail = ({ shop }: { shop?: Shop }) => {
   const {
+    id,
     shopTitle,
     description,
     category,
+    categoryId,
     subCategory,
     openingHours,
     image,
@@ -40,7 +43,9 @@ const ShopDetail = ({ shop }: { shop?: Shop }) => {
         metaDescription: {metaDescription}
       </p>
       <hr />
-      <p className="italic text-gray-500">Category: {category}</p>
+      {category ? (
+        <p className="italic text-gray-500">Category: {category}</p>
+      ) : null}
       <p className="mt-2 font-medium text-gray-900">
         Subcategory: {subCategory}
       </p>
@@ -64,6 +69,10 @@ const ShopDetail = ({ shop }: { shop?: Shop }) => {
       <p className="mt-2 font-medium text-gray-900">
         Facebook: {socialLinks?.facebook}
       </p>
+      <h2 className="text-primary text-3xl">Similar shops</h2>
+      {category ? (
+        <SimilarShops categoryId={categoryId!} currentShopId={id!} limit={5} />
+      ) : null}
     </>
   );
 };
