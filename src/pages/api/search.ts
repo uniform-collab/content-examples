@@ -19,16 +19,13 @@ export default async function handler(
   // }
 
   // adding category filter, if provided
-  let filters = {};
-  if (cat) {
-    filters = {
-      "fields.category": { eq: cat },
-    };
-  }
+  const filters: any = {
+    type: { eq: "shop" },
+    ...(cat ? { "fields.category": { eq: cat } } : {}),
+  };
 
   const searchResults = await contentClient
     .getEntries({
-      type: ["shop"],
       search: searchQuery,
       filters,
       skipDataResolution: true,

@@ -18,6 +18,7 @@ export type Shop = {
   categoryId?: string;
   category?: string;
   subCategory?: string;
+  serviceId?: string;
   openingHours?: OpeningHour[];
   services?: string[];
   logoImage?: {

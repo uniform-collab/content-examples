@@ -152,7 +152,7 @@ export const entryToShop = (
     ),
     thumbnailImage: {
       src: e.entry?.fields?.mobileImage?.value
-        ? (e.entry?.fields?.mobileImage?.value as AssetParamValue)[0].fields
+        ? (e.entry?.fields?.mobileImage?.value as AssetParamValue)[0]?.fields
             ?.url?.value
         : // TODO: remove this fallback after images are sorted
           "https://tailwindui.com/img/ecommerce-images/category-page-07-product-01.jpg",
@@ -163,7 +163,7 @@ export const entryToShop = (
     },
     image: {
       src: e.entry?.fields?.largeImage?.value
-        ? (e.entry?.fields?.largeImage?.value as AssetParamValue)[0].fields?.url
+        ? (e.entry?.fields?.largeImage?.value as AssetParamValue)[0]?.fields?.url
             ?.value
         : // TODO: remove this fallback after images are sorted
           "https://tailwindui.com/img/ecommerce-images/category-page-07-product-01.jpg",
@@ -171,28 +171,24 @@ export const entryToShop = (
     category: categoryName ?? "",
     categoryId: (e.entry?.fields?.category?.value as string) ?? "",
     subCategory: subCategoryName ?? "",
-    services:
-      (
-        e.entry?.fields?.services?.value as Array<{
-          fields: { itemName: string };
+    serviceId: (e.entry?.fields?.services?.value as string) ?? "",
+    openingHours:
+      ((
+        e.entry?.fields?.openingHours?.value as Array<{
+          fields: {
+            displayName: string;
+            openingTime: string;
+            closingTime: string;
+          };
         }>
-      )?.map((c: any) => c.fields?.itemName?.value) ?? [],
-    openingHours: (
-      e.entry?.fields?.openingHours?.value as Array<{
-        fields: {
-          displayName: string;
-          openingTime: string;
-          closingTime: string;
+      )?.map((c: any) => {
+        return {
+          day: c.fields.displayName?.value,
+          open: c.fields.openingTime?.value,
+          close: c.fields.closingTime?.value,
         };
-      }>
-    )?.map((c: any) => {
-      return {
-        day: c.fields.displayName?.value,
-        open: c.fields.openingTime?.value,
-        close: c.fields.closingTime?.value,
-      };
-    }) as OpeningHour[],
-    phoneNumber: e.entry?.fields?.contact?.value as string,
+      }) as OpeningHour[]) ?? [],
+    phoneNumber: (e.entry?.fields?.contact?.value as string) ?? "",
     metaDescription: (e.entry?.fields?.metaDescription?.value as string) ?? "",
     pageTitle: (e.entry?.fields?.pageTitle?.value as string) ?? "",
     mapId: e.entry?.fields?.placeId?.value as string,
