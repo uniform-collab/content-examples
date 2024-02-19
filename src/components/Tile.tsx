@@ -34,7 +34,6 @@ const ShopTile = ({
           Subcategory: {subCategory}
         </p>
       ) : null}
-      <p className="mt-2 font-medium text-gray-900">Contact: {phoneNumber}</p>
       {services && services.length > 0 ? (
         <p className="mt-2 font-medium text-gray-900">
           Services: {services?.join(",")}

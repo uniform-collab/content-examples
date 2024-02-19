@@ -87,7 +87,7 @@ const ShopSearch = ({ categories }: { categories: Record<string, string> }) => {
                 Z-A
               </button>
             </span>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8 pt-6">
               {searchResults?.map((shop: Shop, index: number) => (
                 <ShopTile key={index} {...shop} />
               ))}
