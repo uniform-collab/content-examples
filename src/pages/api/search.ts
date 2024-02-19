@@ -18,9 +18,10 @@ export default async function handler(
   //   return res.status(200).json([]);
   // }
 
-  // adding category filter, if provided
+  // TODO: the filter typings will be available soon
   const filters: any = {
     type: { eq: "shop" },
+    // adding category filter, if provided
     ...(cat ? { "fields.category": { eq: cat } } : {}),
   };
 
